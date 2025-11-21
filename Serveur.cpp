@@ -21,6 +21,18 @@ int main()
   fprintf(stderr,"(SERVEUR) Creation de la file de messages\n");
   // TO DO (etape 2)
 
+
+  //                _id de la file
+  //               /
+  //              /     _cree file si existe pas
+  //             /     /           _lecture et ecriture pour tous 
+  //            /     /           /
+  idQ = msgget(CLE, IPC_CREAT | 0666);
+  if (idQ == -1) {
+      perror("Erreur lors de la creation de la file de messages");
+      exit(EXIT_FAILURE);
+  }
+
   // Attente de connection de 2 clients
   fprintf(stderr,"(SERVEUR) Attente de connection d'un premier client...\n");
   // TO DO (etape 5)
