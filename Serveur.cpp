@@ -22,11 +22,13 @@ int main()
   // TO DO (etape 2)
 
 
-  //                _id de la file
-  //               /
-  //              /     _cree file si existe pas
-  //             /     /           _lecture et ecriture pour tous 
-  //            /     /           /
+  //                   _id de la file
+  //                  /
+  //                 /     _envoie signal a msgget et cree file si existe pas
+  //                /     /     
+  //               /     /           _lecture et ecriture pour tous 
+  //              /     /           /
+  //             /     /           /
   idQ = msgget(CLE, IPC_CREAT | 0666);
   if (idQ == -1) {
       perror("Erreur lors de la creation de la file de messages");
