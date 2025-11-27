@@ -44,7 +44,7 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
   //  (etape 5)
 
   MESSAGE msgId;
-  msgId.type = 1;            // Type 1 comme convention pour identification
+  msgId.type = 1;            // Type 1 comme convention pour le serveur car attend requete de type 1
   msgId.expediteur = getpid();
   sprintf(msgId.texte, "(client) : %s", nomClient);
 
@@ -135,11 +135,11 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
     }
 
     // Lecture immédiate (on récupère le message du même type pour le test)
-    MESSAGE recuMsg;
+    /*MESSAGE recuMsg;
     if (msgrcv(idQ, &recuMsg, sizeof(MESSAGE) - sizeof(long), 1, 0) == -1) {
         perror("Erreur msgrcv");
         return;
-    }
+    }*/
 
     /*
     // Affichage dans l’UI
