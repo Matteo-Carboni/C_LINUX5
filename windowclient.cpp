@@ -8,22 +8,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+void handler_SIGUSR1(int sig);
+
 
 extern WindowClient *w;
 
 #include "protocole.h" // contient la cle et la structure d'un message
-
-void handler_SIGUSR1(int sig) {
-    MESSAGE msg;
-    // Lecture du message dont le type = pid du client (getpid())
-    if (msgrcv(idQ, &msg, sizeof(MESSAGE) - sizeof(long), getpid(), 0) == -1) {
-        perror("Erreur msgrcv dans handler SIGUSR1");
-        return;
-    }
-    if (w) {
-        w->setRecu(msg.texte);  // Affiche le message dans l’UI
-    }
-}
 
 extern char nomClient[40];
 int idQ; // identifiant de la file de message
@@ -54,10 +44,13 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
   //  (etape 5)
 
   MESSAGE msgId;
-  msgId.type = 2;            // Type 2 comme convention pour identification
+  msgId.type = 1;            // Type 1 comme convention pour identification
   msgId.expediteur = getpid();
-  strcpy(msgId.texte, "client_id");
+  sprintf(msgId.texte, "(client) : %s", nomClient);
+
+  fprintf(stderr, "CLIENT : %s | pid client :%d", nomClient, getpid());
   if (msgsnd(idQ, &msgId, sizeof(MESSAGE) - sizeof(long), 0) == -1) {
+
       perror("Erreur envoi id client");
       exit(EXIT_FAILURE);
   }
@@ -67,14 +60,7 @@ WindowClient::WindowClient(QWidget *parent):QMainWindow(parent),ui(new Ui::Windo
   //  (etape 4)
 
   struct sigaction sa;
-  sa.sa_handler = [](int) {
-      MESSAGE msg;
-      if (msgrcv(idQ, &msg, sizeof(MESSAGE) - sizeof(long), getpid(), 0) == -1) {
-          perror("Erreur msgrcv dans handler SIGUSR1");
-          return;
-      }
-      w->setRecu(msg.texte);
-  };
+  sa.sa_handler = handler_SIGUSR1;
   sigemptyset(&sa.sa_mask);
   sa.sa_flags = 0;
   sigaction(SIGUSR1, &sa, NULL);
@@ -155,8 +141,11 @@ void WindowClient::on_pushButtonEnvoyer_clicked()
         return;
     }
 
+    /*
     // Affichage dans l’UI
     setRecu(recuMsg.texte);
+    */
+    
 }
 
 
@@ -170,5 +159,17 @@ void WindowClient::on_pushButtonQuitter_clicked()
 ///// Handlers de signaux ////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  (etape 4)
+
+void handler_SIGUSR1(int sig) {
+    MESSAGE msg;
+    // Lecture du message dont le type = pid du client (getpid())
+    if (msgrcv(idQ, &msg, sizeof(MESSAGE) - sizeof(long), getpid(), 0) == -1) {
+        perror("Erreur msgrcv dans handler SIGUSR1");
+        return;
+    }
+    if (w) {
+        w->setRecu(msg.texte);  // Affiche le message dans l’UI
+    }
+}
 
 
