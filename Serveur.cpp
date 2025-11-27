@@ -28,7 +28,7 @@ int main()
   // TO DO (etape 2)
 
 
-  //                   _id de la file
+  //                    _Cle de la file
   //                  /
   //                 /     _envoie signal a msgget et cree file si existe pas
   //                /     /     
@@ -96,10 +96,10 @@ int main()
     fprintf(stderr, "(SERVEUR) Envoi de la reponse à %d\n", reponse.type);
 
        // Réception d'un message de type 0 (le premier message disponible)
-    if (msgsnd(idQ, &requete, sizeof(MESSAGE) - sizeof(long), 0) == -1) {
+    /*if (msgsnd(idQ, &requete, sizeof(MESSAGE) - sizeof(long), 0) == -1) {
         perror("Erreur msgsnd");
         exit(1);
-    }
+    }*/
 
     if( kill(destinataire, SIGUSR1) == -1){
 
